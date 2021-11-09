@@ -23,6 +23,14 @@ model_params['shift'] = [0.0] * num_experiments
 model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
 model_params['obs_cov'] = [(2.0 * 0.01)/model_params['obs_gap'][i] for i in range(num_experiments)] 
 
+_model_params = {}
+_model_params['x0'] = [x0] * num_experiments
+_model_params['ev_time'] = [300] * num_experiments
+_model_params['prior_cov'] = [1.0] * num_experiments
+_model_params['shift'] = [4.0] * num_experiments
+_model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
+_model_params['obs_cov'] = [(2.0 * 0.01)/model_params['obs_gap'][i] for i in range(num_experiments)]
+
 experiment_params = {}
 experiment_params['num_asml_steps'] = model_params['ev_time']#[5] * num_experiments
 experiment_params['obs_seed'] = [3] * num_experiments
@@ -47,13 +55,16 @@ filter_params['resampling_cov'] = [0.5] * num_experiments
 
 batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_experiments, model_params=model_params, experiment_params=experiment_params,\
                             filter_types=[fl.ParticleFilter] * num_experiments, filter_params=filter_params, folders=['data'] * num_experiments)
-_batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_experiments, model_params=model_params, experiment_params=_experiment_params,\
+_batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_experiments, model_params=_model_params, experiment_params=_experiment_params,\
                             filter_types=[fl.ParticleFilter] * num_experiments, filter_params=filter_params, folders=['data'] * num_experiments)
 
-folder_list_1 = [experiment.folder for experiment in batch_experiment.get_exps()]
-folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps()]
+folder_list_1 = [experiment.folder for experiment in batch_experiment.get_exps()][:2]
+folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps()][:2]
+print(folder_list_1)
+print('\n'*5)
+print(folder_list_2)
 dist_folder = 'dists'
 batch_dist = ws.BatchDist(folder_list_1, folder_list_2, dist_folder)
-batch_dist.run(gap=1, ev_time=None)
+#batch_dist.run(gap=1, ev_time=None, plot=True)
 
 

@@ -4,6 +4,7 @@ import numpy as np
 import utility as ut
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 def cost_matrix(x, y, p=2):
     "Returns the cost matrix C_{ij}=|x_i - y_j|^p"
@@ -122,16 +123,17 @@ class BatchDist:
         self.dist_folder = dist_folder
     
     @ut.timer
-    def run_for_pair(self, folder_1, folder_2, gap=4, ev_time=400, epsilon=0.01, num_iters=200, p=2):
+    def run_for_pair(self, folder_1, folder_2, gap=4, ev_time=400, epsilon=0.01, num_iters=200, p=2, plot=False):
     
-        file_1 = tables.open_file(folder_1 + '/assimilation.h5')
-        file_2 = tables.open_file(folder_2 + '/assimilation.h5')
+        file_1 = tables.open_file(folder_1 + '/assimilation.h5', mode='r')
+        file_2 = tables.open_file(folder_2 + '/assimilation.h5', mode='r')
 
         if ev_time is None:
             ev_1 = len(file_1.root.observation.read().tolist())
             ev_2 = len(file_2.root.observation.read().tolist())
             ev_time = min(ev_1, ev_2)
             print('minimum number of total assimilation steps counted  = {}'.format(ev_time))
+            #exit()
 
         dist = np.zeros(int(ev_time / gap))
         for i, t in enumerate(range(0, ev_time, gap)):
@@ -147,21 +149,31 @@ class BatchDist:
             dist[i] = (sinkhorn_div_tf(ensemble_1, ensemble_2,\
                        epsilon=epsilon, num_iters=num_iters, p=p).numpy())**(1./p)
 
-        file_path = '{}/{}_vs_{}.npy'.format(self.dist_folder, folder_1, folder_2)
+        #file_path = '{}/{}_vs_{}.npy'.format(self.dist_folder, os.path.basename(folder_1), os.path.basename(folder_2))
         #np.save(file_path, dist)
+        file_name = '{}/{}_vs_{}'.format(self.dist_folder, os.path.basename(folder_1), os.path.basename(folder_2))
+        data = {'time': [], 'sinkhorn_div': []}
+        data['time'] += list(range(0, ev_time, gap))
+        data['sinkhorn_div'] += list(dist)
+        df = pd.DataFrame(data)
+        df.to_csv(file_name + '.csv', index=False)
         file_1.close()
         file_2.close()
+        if plot:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            ax.plot(data['time'], data['sinkhorn_div'])
+            ax.set_xlabel('assimilation step')
+            ax.set_ylabel('sinkhorn distance')
+            plt.savefig(file_name + '.png')
         return dist, ev_time
 
     @ut.timer
-    def run(self, gap=4, ev_time=400, epsilon=0.01, num_iters=200, p=2):
+    def run(self, gap=4, ev_time=400, epsilon=0.01, num_iters=200, p=2, plot=False):
         for folder_1 in self.flist_1:
             for folder_2 in self.flist_2:
-                data = {'time': [], 'sinkhorn_div': []}
                 print('comparing {} and {}'.format(folder_1, folder_2))
-                dist, num_steps = self.run_for_pair(folder_1, folder_2, gap, ev_time, epsilon, num_iters, p)
-                data['time'] += list(range(0, num_steps, gap))
+                dist, num_steps = self.run_for_pair(folder_1, folder_2, gap, ev_time, epsilon, num_iters, p, plot)
                 #data['seed'] += [seed] * len(dist) 
-                data['sinkhorn_div'] += list(dist)
-                df = pd.DataFrame(data)
-                df.to_csv('{}/{}_vs_{}.csv'.format(self.dist_folder, os.path.basename(folder_1), os.path.basename(folder_2)), index=False)
+                
+                
