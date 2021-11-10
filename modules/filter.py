@@ -131,8 +131,12 @@ class BatchExperiment:
         self.filter_types = filter_types
         self.folders = folders
 
-    def run(self, true_trajectories):    
-        for i, model_params in enumerate(self.mparams_list):
+    def run(self, true_trajectories, end=None):
+        if end is not None:
+            mparams_list = self.mparams_list[:end]
+        else:
+            mparams_list = self.mparams_list
+        for i, model_params in enumerate(mparams_list):
             experiment = Experiment(self.get_model_funcs[i], model_params, self.eparams_list[i], self.filter_types[i], self.fparams_list[i], self.folders[i])
             print('working on experiment#{}, id = {}'.format(i, experiment.name))
             experiment.run(true_trajectories[i])

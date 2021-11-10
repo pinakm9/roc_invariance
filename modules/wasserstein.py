@@ -170,10 +170,10 @@ class BatchDist:
 
     @ut.timer
     def run(self, gap=4, ev_time=400, epsilon=0.01, num_iters=200, p=2, plot=False):
-        for folder_1 in self.flist_1:
-            for folder_2 in self.flist_2:
-                print('comparing {} and {}'.format(folder_1, folder_2))
-                dist, num_steps = self.run_for_pair(folder_1, folder_2, gap, ev_time, epsilon, num_iters, p, plot)
-                #data['seed'] += [seed] * len(dist) 
+        for i, folder_1 in enumerate(self.flist_1):
+            folder_2 = self.flist_2[i]
+            print('comparing {} and {}'.format(folder_1, folder_2))
+            dist, num_steps = self.run_for_pair(folder_1, folder_2, gap, ev_time, epsilon, num_iters, p, plot)
+            #data['seed'] += [seed] * len(dist) 
                 
                 

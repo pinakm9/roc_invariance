@@ -43,4 +43,4 @@ for i in range(num_experiments):
     true_trajectories.append(gen_path(model_params['x0'][i], model_params['ev_time'][i]))
 batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_experiments, model_params=model_params, experiment_params=experiment_params,\
                             filter_types=[fl.ParticleFilter] * num_experiments, filter_params=filter_params, folders=['data'] * num_experiments)
-batch_experiment.run(true_trajectories)
+batch_experiment.run(true_trajectories, 1)

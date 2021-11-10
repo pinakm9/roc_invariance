@@ -12,8 +12,9 @@ import numpy as  np
 import Lorenz96_alt as lorenz
 import filter as fl
 import matplotlib.pyplot as plt
-import glob
+import json
 import pandas as pd
+import os
 
 num_experiments = 20
 x0 = np.genfromtxt('../../models/l96_trajectory_1_500.csv', dtype=np.float64, delimiter=',')[-1]
@@ -64,9 +65,11 @@ _batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_
 folder_list_1 = [experiment.folder for experiment in batch_experiment.get_exps()]
 folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps()]
 
+#print(folder_list_2)
+
 dist_folder = 'dists'
 batch_dist = ws.BatchDist(folder_list_1, folder_list_2, dist_folder)
-batch_dist.run(gap=1, ev_time=None, plot=True)
+#batch_dist.run(gap=1, ev_time=None, plot=True)
 
 
 def find_stability(signal, tail):
@@ -74,17 +77,33 @@ def find_stability(signal, tail):
     high, low = max(tailend), min(tailend)
     # find last index which is larger than high
     index_h = np.where(tailend > high)[-1]
+    print('index_h', np.where(tailend > high))
+    """
     # find last index which is smaller than low
     idx = np.where(tailend[index_h+1 :] < low)
     if len(idx) > 0: 
         index = idx[-1]
     else:
         index = index_h + 1
-    return index
+    """
+    return 0#index
 
-"""
-for file in glob.glob('{}/*.csv'.format(dist_folder)):
-    df = pd.read_csv(file, header=None)
-    df['sinkhorn_div']
-    df['time']
-"""
+#"""
+steps = np.zeros(num_experiments, dtype=np.int32)
+gaps = np.zeros(num_experiments, dtype=np.float64)
+for i, folder_1 in enumerate(folder_list_1):
+    folder_2 = folder_list_2[i]
+    file = '{}/{}_vs_{}.csv'.format(dist_folder, os.path.basename(folder_1), os.path.basename(folder_2))
+    df = pd.read_csv(file)
+    steps[i] = find_stability(df['sinkhorn_div'].to_numpy(), tail=100) + 1
+    with open(folder_1 + '/config.json', 'r') as config:
+        gaps[i] = json.load(config)['obs_gap']
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(gaps, steps)
+ax.set_xlabel('observation gap')
+ax.set_ylabel('steps required to stabilize')
+plt.savefig('{}/point of convergence.png'.format(dist_folder))
+#"""
