@@ -11,6 +11,9 @@ import wasserstein as ws
 import numpy as  np
 import Lorenz96_alt as lorenz
 import filter as fl
+import matplotlib.pyplot as plt
+import glob
+import pandas as pd
 
 num_experiments = 20
 x0 = np.genfromtxt('../../models/l96_trajectory_1_500.csv', dtype=np.float64, delimiter=',')[-1]
@@ -58,13 +61,30 @@ batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_e
 _batch_experiment = fl.BatchExperiment(get_model_funcs=[lorenz.get_model] * num_experiments, model_params=_model_params, experiment_params=_experiment_params,\
                             filter_types=[fl.ParticleFilter] * num_experiments, filter_params=filter_params, folders=['data'] * num_experiments)
 
-folder_list_1 = [experiment.folder for experiment in batch_experiment.get_exps()][:2]
-folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps()][:2]
-print(folder_list_1)
-print('\n'*5)
-print(folder_list_2)
+folder_list_1 = [experiment.folder for experiment in batch_experiment.get_exps()]
+folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps()]
+
 dist_folder = 'dists'
 batch_dist = ws.BatchDist(folder_list_1, folder_list_2, dist_folder)
-#batch_dist.run(gap=1, ev_time=None, plot=True)
+batch_dist.run(gap=1, ev_time=None, plot=True)
 
 
+def find_stability(signal, tail):
+    tailend = signal[-tail:-1]
+    high, low = max(tailend), min(tailend)
+    # find last index which is larger than high
+    index_h = np.where(tailend > high)[-1]
+    # find last index which is smaller than low
+    idx = np.where(tailend[index_h+1 :] < low)
+    if len(idx) > 0: 
+        index = idx[-1]
+    else:
+        index = index_h + 1
+    return index
+
+"""
+for file in glob.glob('{}/*.csv'.format(dist_folder)):
+    df = pd.read_csv(file, header=None)
+    df['sinkhorn_div']
+    df['time']
+"""

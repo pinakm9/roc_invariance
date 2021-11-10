@@ -77,8 +77,9 @@ class Experiment:
         self.name = '{}{}{}'.format(self.get_name(), '' if experiment_params['tag']=='' else '_', experiment_params['tag'])  
         self.folder = folder + '{}{}'.format('' if folder=='' else '/', self.name)
         if not os.path.isdir(self.folder):
-            os.makedirs(self.folder)     
-        self.filter = filter_type(self.model, folder=self.folder, **filter_params)
+            os.makedirs(self.folder)
+        self.filter_type = filter_type     
+        
 
 
     def run(self, true_trajectory):
@@ -86,6 +87,7 @@ class Experiment:
         np.random.seed(self.params.experiment['obs_seed'])
         observations = self.model.observation.generate_path(true_trajectory)
         np.random.seed(self.params.experiment['filter_seed'])
+        self.filter = self.filter_type(self.model, folder=self.folder, **self.params.filter)
         self.filter.update(observations)
         cc = cf.ConfigCollector(folder = self.folder)
         # document results
@@ -139,6 +141,7 @@ class BatchExperiment:
     def get_exps(self):
         for i, model_params in enumerate(self.mparams_list):
             yield Experiment(self.get_model_funcs[i], model_params, self.eparams_list[i], self.filter_types[i], self.fparams_list[i], self.folders[i])
+
 
     def split_dict(self, d):
         return list(map(dict, zip(*[[(k, v) for v in value] for k, value in d.items()])))
