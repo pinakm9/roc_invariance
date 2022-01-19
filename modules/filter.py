@@ -59,7 +59,7 @@ class Parameters:
     
 
     def set_model_params(self, model):
-        self.model['obs_gap'] = model.params['obs_gap']
+        #self.model['obs_gap'] = model.params['obs_gap']
         self.model['state_cov'] = model.hidden_state.sigma[0][0]
         #self.model['obs_coords'] = model.obs_coords
         self.model = {**self.model, **model.params}
@@ -74,7 +74,7 @@ class Experiment:
     def __init__(self, get_model_func, model_params, experiment_params, filter_type, filter_params, folder=''):
         self.model = get_model_func(**model_params)[0]
         self.params = Parameters(self.model, experiment_params, filter_params)
-        self.name = '{}{}{}'.format(self.get_name(), '' if experiment_params['tag']=='' else '_', experiment_params['tag'])  
+        self.name = experiment_params['tag']  
         self.folder = folder + '{}{}'.format('' if folder=='' else '/', self.name)
         if not os.path.isdir(self.folder):
             os.makedirs(self.folder)
@@ -114,9 +114,9 @@ class Experiment:
         return dhash.hexdigest()
 
 
-    def get_name(self):
+    def get_id(self):
         d = self.params.get_all()
-        #d.pop('tag', None)
+        d.pop('tag', None)
         return self.dict_hash(d)
 
 

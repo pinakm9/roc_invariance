@@ -1,0 +1,18 @@
+{
+  "state_cov": 0.0,
+  "num_asml_steps": 300,
+  "obs_seed": 11,
+  "filter_seed": 11,
+  "coords_to_plot": [
+    0,
+    1,
+    8,
+    9
+  ],
+  "tag": "prior_1_obs_gap_0.045000000000000005",
+  "particle_count": 500,
+  "threshold_factor": 1.0,
+  "resampling_method": "systematic_noisy",
+  "resampling_cov": 0.5,
+  "status": "success"
+}

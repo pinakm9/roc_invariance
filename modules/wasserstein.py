@@ -5,6 +5,7 @@ import utility as ut
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+import json
 
 def cost_matrix(x, y, p=2):
     "Returns the cost matrix C_{ij}=|x_i - y_j|^p"
@@ -160,11 +161,15 @@ class BatchDist:
         file_1.close()
         file_2.close()
         if plot:
+            with open(folder_1 + '/config.json', 'r') as config:
+                obs_gap = json.load(config)['obs_gap']
+
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            ax.plot(data['time'], data['sinkhorn_div'])
+            ax.plot(data['time'], data['sinkhorn_div'], label='obs_gap = {}'.format(obs_gap))
             ax.set_xlabel('assimilation step')
             ax.set_ylabel('sinkhorn distance')
+            plt.legend()
             plt.savefig(file_name + '.png')
         return dist, ev_time
 
@@ -176,4 +181,15 @@ class BatchDist:
             dist, num_steps = self.run_for_pair(folder_1, folder_2, gap, ev_time, epsilon, num_iters, p, plot)
             #data['seed'] += [seed] * len(dist) 
                 
-                
+
+def find_stability(signal, tail):
+    tailend = signal[-tail:-1]
+    mean = np.mean(tailend)
+    return np.where(signal <= mean)[0][0]
+
+def find_stability_sma(signal, **kwargs):
+    N = kwargs['window']
+    avg_signal = np.convolve(signal, np.ones(N)/N, mode='valid')
+    avg_signal_reversed = np.convolve(signal[::-1], np.ones(N)/N, mode='valid')
+    #print(avg_signal, avg_signal_reversed)
+    return np.where(avg_signal <= avg_signal_reversed)[0][0]
