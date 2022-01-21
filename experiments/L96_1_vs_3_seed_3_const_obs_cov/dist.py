@@ -25,7 +25,7 @@ model_params['ev_time'] = [300] * num_experiments
 model_params['prior_cov'] = [0.1] * num_experiments
 model_params['shift'] = [0.0] * num_experiments
 model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
-model_params['obs_cov'] = [model_params['obs_gap'][i]/(0.1 / 2.0) for i in range(num_experiments)] 
+model_params['obs_cov'] = [0.1 for i in range(num_experiments)] 
 
 experiment_params = {}
 experiment_params['num_asml_steps'] = model_params['ev_time']#[5] * num_experiments
@@ -40,7 +40,7 @@ _model_params['ev_time'] = [300] * num_experiments
 _model_params['prior_cov'] = [1.0] * num_experiments
 _model_params['shift'] = [4.0] * num_experiments
 _model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
-_model_params['obs_cov'] = [model_params['obs_gap'][i]/(0.1 / 2.0) for i in range(num_experiments)] 
+_model_params['obs_cov'] = [0.1 for i in range(num_experiments)] 
 
 
 _experiment_params = {}
@@ -69,7 +69,7 @@ folder_list_2 = [experiment.folder for experiment in _batch_experiment.get_exps(
 
 dist_folder = 'dists'
 batch_dist = ws.BatchDist(folder_list_1, folder_list_2, dist_folder)
-#batch_dist.run(gap=1, ev_time=None, plot=True)
+batch_dist.run(gap=1, ev_time=None, plot=True)
 
 
 def find_stability(signal, tail):
