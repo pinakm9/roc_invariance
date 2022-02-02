@@ -1,6 +1,6 @@
 {
   "state_cov": 0.0,
-  "num_asml_steps": 100,
+  "num_asml_steps": 500,
   "obs_seed": 3,
   "filter_seed": 3,
   "coords_to_plot": [

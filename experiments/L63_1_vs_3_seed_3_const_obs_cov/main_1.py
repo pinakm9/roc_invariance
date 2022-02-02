@@ -11,12 +11,12 @@ import Lorenz63_xz as lorenz
 import filter as fl
 import numpy as  np
 
-num_experiments = 10
+num_experiments = 1
 x0 = np.genfromtxt('../../models/l63_trajectory_1_500.csv', dtype=np.float64, delimiter=',')[-1]
 
 model_params = {}
 model_params['x0'] = [x0] * num_experiments
-model_params['ev_time'] = [100] * num_experiments
+model_params['ev_time'] = [500] * num_experiments
 model_params['prior_cov'] = [0.1] * num_experiments
 model_params['shift'] = [0.0] * num_experiments
 model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]

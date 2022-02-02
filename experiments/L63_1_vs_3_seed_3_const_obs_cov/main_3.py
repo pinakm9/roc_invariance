@@ -18,7 +18,7 @@ model_params = {}
 model_params['x0'] = [x0] * num_experiments
 model_params['ev_time'] = [100] * num_experiments
 model_params['prior_cov'] = [1.0] * num_experiments
-model_params['shift'] = [4.0] * num_experiments
+model_params['shift'] = [10.0] * num_experiments
 model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
 model_params['obs_cov'] = [0.1 for i in range(num_experiments)] 
 

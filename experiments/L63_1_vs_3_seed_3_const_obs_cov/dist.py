@@ -16,7 +16,7 @@ import json
 import pandas as pd
 import os
 
-num_experiments = 10
+num_experiments = 1
 x0 = np.genfromtxt('../../models/l63_trajectory_1_500.csv', dtype=np.float64, delimiter=',')[-1]
 
 model_params = {}
@@ -31,7 +31,7 @@ _model_params = {}
 _model_params['x0'] = [x0] * num_experiments
 _model_params['ev_time'] = [300] * num_experiments
 _model_params['prior_cov'] = [1.0] * num_experiments
-_model_params['shift'] = [4.0] * num_experiments
+_model_params['shift'] = [10.0] * num_experiments
 _model_params['obs_gap'] = [0.01 + i*0.005 for i in range(num_experiments)]
 _model_params['obs_cov'] = [(2.0 * 0.01)/model_params['obs_gap'][i] for i in range(num_experiments)]
 
@@ -48,7 +48,7 @@ _experiment_params['num_asml_steps'] = model_params['ev_time']#[5] * num_experim
 _experiment_params['obs_seed'] = [3] * num_experiments
 _experiment_params['filter_seed'] = [3] * num_experiments
 _experiment_params['coords_to_plot'] = [[0, 1, 8, 9]] * num_experiments
-_experiment_params['tag'] = ['prior_3_obs_gap_{}'.format(gap) for gap in model_params['obs_gap']]
+_experiment_params['tag'] = ['prior_4_obs_gap_{}'.format(gap) for gap in model_params['obs_gap']]
 
 
 filter_params = {}
@@ -71,13 +71,13 @@ dist_folder = 'dists'
 batch_dist = ws.BatchDist(folder_list_1, folder_list_2, dist_folder)
 batch_dist.run(gap=1, ev_time=None)
 
-
+"""
 def find_stability(signal, tail):
     tailend = signal[-tail:-1]
     mean = np.mean(tailend)
     return np.where(signal <= mean)[0][0]
 
-#"""
+
 steps = np.zeros(num_experiments, dtype=np.int32)
 gaps = np.zeros(num_experiments, dtype=np.float64)
 for i, folder_1 in enumerate(folder_list_1):
