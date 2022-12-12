@@ -80,6 +80,13 @@ def animator(t):
     ax_u.scatter(ens_1[:, 0], ens_1[:, 1], ens_1[:, 2], c='deeppink', label='good prior')
     ax_u.scatter(ens_2[:, 0], ens_2[:, 1], ens_2[:, 2], c='orange', label='bad prior')
     ax_u.set_title('unfiltered, time = {:.2f}, dist = {:.2f}'.format(obs_gap * t, dist_2[t]))
+
+    ax_f.set_xlim(-20, 20)
+    ax_f.set_ylim(-30, 30)
+    ax_f.set_zlim(0, 50)
+    ax_u.set_xlim(-20, 20)
+    ax_u.set_ylim(-30, 30)
+    ax_u.set_zlim(0, 50)
 anim = FuncAnimation(fig=fig, func=animator, frames=ev_time, repeat=False)
 anim.save('data/filtered_vs_unfiltered.mp4', writer='ffmpeg', fps=12)
 #plt.show()

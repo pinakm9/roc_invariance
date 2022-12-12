@@ -27,7 +27,7 @@ experiment_params['num_asml_steps'] = model_params['ev_time']#[5] * num_experime
 experiment_params['obs_seed'] = [3] * num_experiments
 experiment_params['filter_seed'] = [3] * num_experiments
 experiment_params['coords_to_plot'] = [[0, 1, 8, 9]] * num_experiments
-experiment_params['tag'] = ['prior_1_obs_gap_{}'.format(gap) for gap in model_params['obs_gap']]  
+experiment_params['tag'] = ['prior_1_obs_gap_{}_seed_{}'.format(gap, seed) for gap, seed in zip(model_params['obs_gap'], experiment_params['obs_seed'])]  
 
 
 filter_params = {}
