@@ -71,7 +71,7 @@ def animator(t):
     ax_f.scatter(attractor[:, 0], attractor[:, 1], attractor[:, 2], c='lightblue')
     ax_f.scatter(ens_1[:, 0], ens_1[:, 1], ens_1[:, 2], c='deeppink', label='good prior')
     ax_f.scatter(ens_2[:, 0], ens_2[:, 1], ens_2[:, 2], c='orange', label='bad prior')
-    ax_f.set_title('filtered, time = {:.2f}, dist = {:.2f}'.format(obs_gap * t, dist_1[t]))
+    ax_f.set_title('filtered, time = {:.2f}, dist = {:.2f}'.format(obs_gap * t, dist_1[t]), fontsize=20)
 
 
     ax_u.clear()
@@ -79,7 +79,7 @@ def animator(t):
     ax_u.scatter(attractor[:, 0], attractor[:, 1], attractor[:, 2], c='lightblue')
     ax_u.scatter(ens_1[:, 0], ens_1[:, 1], ens_1[:, 2], c='deeppink', label='good prior')
     ax_u.scatter(ens_2[:, 0], ens_2[:, 1], ens_2[:, 2], c='orange', label='bad prior')
-    ax_u.set_title('unfiltered, time = {:.2f}, dist = {:.2f}'.format(obs_gap * t, dist_2[t]))
+    ax_u.set_title('unfiltered, time = {:.2f}, dist = {:.2f}'.format(obs_gap * t, dist_2[t]), fontsize=20)
 
     ax_f.set_xlim(-20, 20)
     ax_f.set_ylim(-30, 30)
